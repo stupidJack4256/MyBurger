@@ -20,8 +20,31 @@ class BurgerBuilder extends Component {
 			cheese: 0,
 			bacon: 0
 		},
-		totalPrice: 200
+		totalPrice: 200,
+		purchasable: false
 	}
+
+	updatePurchaseState (ingredients) {
+		const sum = Object.keys(ingredients)
+					.map(igKey=>{
+						return ingredients[igKey];
+					})
+					.reduce((sum, el) =>{
+						return sum+el;
+					} ,0)
+		// instead of Object.keys we can make use of Object.values
+		// const anil = Object.values(ingredients)
+		// 			.reduce((sum, el) =>{
+		// 				return sum+el;
+		// 			} ,0)
+		// console.log(anil);
+		this.setState({purchasable: sum > 0})
+		
+		// insteadof mapping through all the ingredients, use totalPrice
+		// if(price <= 200){
+		// 	this.setState({purchasable: true})
+		// }
+		}
 
 	
 	addIngredienthandler=(type)=>{
@@ -36,6 +59,8 @@ class BurgerBuilder extends Component {
 		const newPrice = oldPrice+priceAddition;
 		
 		this.setState({ingredients: updatedIngredients, totalPrice: newPrice});
+		this.updatePurchaseState(updatedIngredients);
+
 	}
 	
 	removeIngredientHandler = (type) =>{
@@ -53,6 +78,8 @@ class BurgerBuilder extends Component {
 		const newPrice = oldPrice-priceDeduction;
 		
 		this.setState({ingredients: updatedIngredients, totalPrice: newPrice});
+		this.updatePurchaseState(updatedIngredients);
+
 	}
 	
 	render(){
@@ -71,6 +98,7 @@ class BurgerBuilder extends Component {
 					ingredientAdded={this.addIngredienthandler}
 					ingredientRemoved={this.removeIngredientHandler}
 					disabled={disabledInfo}
+					purchasable={this.state.purchasable}
 					price={this.state.totalPrice}/>
 			</Aux>
 		)
